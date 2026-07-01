@@ -32,7 +32,9 @@ function Index() {
           {cfg.pages.home_hero_subtitle}
         </p>
       </motion.div>
-      <Converter />
+      <Suspense fallback={<div className="glass rounded-2xl h-[420px] animate-pulse" />}>
+        <Converter />
+      </Suspense>
 
       <section className="mt-14 grid gap-4 md:grid-cols-3">
         {[
