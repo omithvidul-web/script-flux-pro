@@ -133,7 +133,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <ThemeBoot />
       <Splash />
-      <AdminUnlockListener />
+      <Suspense fallback={null}><AdminUnlockListener /></Suspense>
       <div className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-1">
