@@ -1,7 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { lazy, Suspense } from "react";
 import { motion } from "framer-motion";
-import { Converter } from "@/components/Converter";
 import { useConfig } from "@/lib/config/store";
+
+const Converter = lazy(() =>
+  import("@/components/Converter").then((m) => ({ default: m.Converter })),
+);
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -28,7 +32,9 @@ function Index() {
           {cfg.pages.home_hero_subtitle}
         </p>
       </motion.div>
-      <Converter />
+      <Suspense fallback={<div className="glass rounded-2xl h-[420px] animate-pulse" />}>
+        <Converter />
+      </Suspense>
 
       <section className="mt-14 grid gap-4 md:grid-cols-3">
         {[
