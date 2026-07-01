@@ -19,8 +19,6 @@ const AdminUnlockListener = lazy(() =>
 );
 import { Toaster } from "sonner";
 import { applyTheme, getInitialTheme } from "../lib/theme";
-import { Toaster } from "sonner";
-import { applyTheme, getInitialTheme } from "../lib/theme";
 
 function NotFoundComponent() {
   return (
