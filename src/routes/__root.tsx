@@ -7,14 +7,18 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, lazy, Suspense, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { Splash } from "../components/Splash";
-import { AdminUnlockListener } from "../components/AdminUnlockListener";
+const AdminUnlockListener = lazy(() =>
+  import("../components/AdminUnlockListener").then((m) => ({ default: m.AdminUnlockListener })),
+);
+import { Toaster } from "sonner";
+import { applyTheme, getInitialTheme } from "../lib/theme";
 import { Toaster } from "sonner";
 import { applyTheme, getInitialTheme } from "../lib/theme";
 
