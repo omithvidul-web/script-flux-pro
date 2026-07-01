@@ -9,7 +9,7 @@ import { useConfig } from "@/lib/config/store";
 import { fireAdsterraOnConvert } from "@/lib/ads/engine";
 
 export function Converter() {
-  const [langCode, setLangCode] = useState("si");
+  const [langCode, setLangCode] = useState("en");
   const [direction, setDirection] = useState<Direction>("legacyToUnicode");
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
