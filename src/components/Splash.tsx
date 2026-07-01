@@ -3,11 +3,18 @@ import { useEffect, useState } from "react";
 import logo from "@/assets/uuc-logo.png.asset.json";
 
 export function Splash() {
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(() => {
+    if (typeof window === "undefined") return true;
+    try { return sessionStorage.getItem("uuc-splash-seen") !== "1"; } catch { return true; }
+  });
   useEffect(() => {
-    const t = setTimeout(() => setVisible(false), 2200);
+    if (!visible) return;
+    const t = setTimeout(() => {
+      setVisible(false);
+      try { sessionStorage.setItem("uuc-splash-seen", "1"); } catch {}
+    }, 700);
     return () => clearTimeout(t);
-  }, []);
+  }, [visible]);
 
   return (
     <AnimatePresence>
