@@ -92,5 +92,6 @@ export function detectLanguage(input: string): LanguageEntry | null {
   return LANGUAGES.find((l) => l.code === best[0]) ?? null;
 }
 
-export { LANGUAGES };
+const SORTED = [...LANGUAGES].sort((a, b) => a.name.localeCompare(b.name));
+export { SORTED as LANGUAGES };
 export type { LanguageEntry };
