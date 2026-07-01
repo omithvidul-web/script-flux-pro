@@ -1,7 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { lazy, Suspense } from "react";
 import { motion } from "framer-motion";
-import { Converter } from "@/components/Converter";
 import { useConfig } from "@/lib/config/store";
+
+const Converter = lazy(() =>
+  import("@/components/Converter").then((m) => ({ default: m.Converter })),
+);
 
 export const Route = createFileRoute("/")({
   component: Index,
