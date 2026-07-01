@@ -1,0 +1,14 @@
+{
+  "name": "Universal Unicode Converter",
+  "short_name": "UUC",
+  "description": "Legacy ↔ Unicode conversion for 135+ languages.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0F0A2E",
+  "theme_color": "#0F0A2E",
+  "icons": [
+    { "src": "/__l5e/assets-v1/0d7f4e2c-a1f8-4385-b015-e30b1919824e/uuc-logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

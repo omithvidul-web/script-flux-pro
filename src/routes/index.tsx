@@ -1,24 +1,47 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { motion } from "framer-motion";
+import { Converter } from "@/components/Converter";
+import { useConfig } from "@/lib/config/store";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
+  const [cfg] = useConfig();
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="mx-auto max-w-6xl px-4 pt-10 pb-20">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="text-center mb-8"
+      >
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-xs backdrop-blur">
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          Ultimate SaaS Platform · 135+ languages
+        </div>
+        <h1 className="mt-4 font-display text-4xl md:text-6xl font-bold leading-[1.05]">
+          <span className="text-gradient">{cfg.pages.home_hero_title}</span>
+        </h1>
+        <p className="mt-4 text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
+          {cfg.pages.home_hero_subtitle}
+        </p>
+      </motion.div>
+      <Converter />
+
+      <section className="mt-14 grid gap-4 md:grid-cols-3">
+        {[
+          { t: "Real bidirectional mappings", d: "Sinhala FM/Wijesekera, Zawgyi, and 13 more legacy encodings." },
+          { t: "Auto-detect scripts", d: "Instantly identify the input language via Unicode block heuristics." },
+          { t: "Private by design", d: "Every conversion runs in your browser. Nothing leaves your device." },
+        ].map((f) => (
+          <div key={f.t} className="glass rounded-2xl p-5">
+            <h3 className="font-semibold text-lg">{f.t}</h3>
+            <p className="mt-1 text-sm text-muted-foreground">{f.d}</p>
+          </div>
+        ))}
+      </section>
     </div>
   );
 }
