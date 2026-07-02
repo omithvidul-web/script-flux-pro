@@ -18,13 +18,14 @@ export const Route = createFileRoute("/admin")({
 type Tab = "admob" | "adsense" | "adsterra" | "nav" | "pages";
 
 function Admin() {
-  const [unlocked, setUnlocked] = useState(false);
+  const [unlocked, setUnlocked] = useState(() => isAdminUnlocked());
   const [tab, setTab] = useState<Tab>("admob");
   const [cfg, update] = useConfig();
 
   useEffect(() => {
-    setUnlocked(isAdminUnlocked());
-  }, []);
+    if (!unlocked) setUnlocked(isAdminUnlocked());
+  }, [unlocked]);
+
 
   if (!unlocked) {
     return (
