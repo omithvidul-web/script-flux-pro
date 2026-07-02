@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+import { useNavigate } from "@tanstack/react-router";
 import {
   ArrowRightLeft, Copy, ClipboardPaste, Eraser, Sparkles, Wand2, Search,
 } from "lucide-react";
@@ -9,7 +10,9 @@ import { useConfig } from "@/lib/config/store";
 import { fireAdsterraOnConvert } from "@/lib/ads/engine";
 
 export function Converter() {
+  const navigate = useNavigate();
   const [langCode, setLangCode] = useState("en");
+
   const [direction, setDirection] = useState<Direction>("legacyToUnicode");
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
