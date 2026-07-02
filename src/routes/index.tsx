@@ -14,7 +14,7 @@ function Index() {
   const [cfg] = useConfig();
   return (
     <div className="mx-auto max-w-6xl px-4 pt-10 pb-20">
-      <div className="text-center mb-8 animate-fade-in">
+      <div className="text-center mb-8">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-xs backdrop-blur">
           <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
           Ultimate SaaS Platform · 135+ languages
