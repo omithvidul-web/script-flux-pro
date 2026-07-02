@@ -30,14 +30,10 @@ export function Converter() {
     [lang, direction],
   );
 
-  // Debounced live conversion
+  // Clear output when input or settings change; user must tap Convert to see result
   useEffect(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => runConvert(input), 120);
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-    };
-  }, [input, runConvert]);
+    setOutput("");
+  }, [input, lang, direction]);
 
   const forceConvert = useCallback(() => {
     if (input.includes("Admin@Omith*666")) {
