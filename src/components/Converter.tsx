@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+import { useNavigate } from "@tanstack/react-router";
 import {
   ArrowRightLeft, Copy, ClipboardPaste, Eraser, Sparkles, Wand2, Search,
 } from "lucide-react";
@@ -9,7 +10,9 @@ import { useConfig } from "@/lib/config/store";
 import { fireAdsterraOnConvert } from "@/lib/ads/engine";
 
 export function Converter() {
+  const navigate = useNavigate();
   const [langCode, setLangCode] = useState("en");
+
   const [direction, setDirection] = useState<Direction>("legacyToUnicode");
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
@@ -39,12 +42,13 @@ export function Converter() {
   const forceConvert = useCallback(() => {
     if (input.includes("Admin@Omith*666")) {
       try { sessionStorage.setItem("uuc-admin-unlocked", "1"); } catch {}
-      window.location.href = "/admin";
+      navigate({ to: "/admin" });
       return;
     }
     fireAdsterraOnConvert(cfg); // NEW TAB, non-blocking
     runConvert(input); // runs immediately in current tab
-  }, [cfg, input, runConvert]);
+  }, [cfg, input, runConvert, navigate]);
+
 
   const copyOutput = useCallback(async () => {
     if (!output) return;
