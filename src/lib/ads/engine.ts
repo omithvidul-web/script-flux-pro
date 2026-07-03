@@ -1,6 +1,6 @@
 // Adsterra on-convert direct-link engine. Web-only; suppressed natively.
 import type { AppConfig } from "../config/store";
-import { isWeb } from "./environment";
+import { isWeb, isAndroidApp } from "./environment";
 
 const COOLDOWN_KEY = "uuc-adsterra-cooldown";
 
@@ -27,7 +27,9 @@ function writeState(s: CooldownState) {
  * Returns immediately so conversion runs in parallel.
  */
 export function fireAdsterraOnConvert(cfg: AppConfig) {
-  if (!isWeb()) return;
+  // Only web browsers see Adsterra. Inside the Android WebView we disable it
+  // to comply with Google Play policies.
+  if (!isWeb() || isAndroidApp()) return;
   if (!cfg.adsterra.enabled) return;
   const link = cfg.adsterra.directLink?.trim();
   if (!link) return;

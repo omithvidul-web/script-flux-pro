@@ -126,23 +126,35 @@ function AdMobPanel({ cfg, update }: PanelProps) {
 
   return (
     <div className="grid gap-3 md:grid-cols-2">
+      <div className="col-span-full">
+        <h2 className="font-display text-lg font-semibold">Manage AdMob IDs</h2>
+        <p className="text-xs text-muted-foreground">
+          These IDs are read by the Android native app at startup. Save here → rebuild not
+          required for existing installs (the WebView shares this storage).
+        </p>
+      </div>
       <label className="col-span-full flex items-center gap-2 text-sm">
         <input type="checkbox" checked={a.enabled} onChange={(e) => set("enabled", e.target.checked)} />
-        Enable AdMob (mobile app builds only)
+        Enable AdMob (Android app build only — hidden on web)
       </label>
-      <Field label="Publisher ID"><input className={inputCls} value={a.publisherId} onChange={(e) => set("publisherId", e.target.value)} /></Field>
-      <Field label="App ID"><input className={inputCls} value={a.appId} onChange={(e) => set("appId", e.target.value)} /></Field>
+      <Field label="AdMob Publisher ID"><input className={inputCls} value={a.publisherId} onChange={(e) => set("publisherId", e.target.value)} placeholder="pub-XXXXXXXXXXXXXXXX" /></Field>
+      <Field label="AdMob App ID"><input className={inputCls} value={a.appId} onChange={(e) => set("appId", e.target.value)} placeholder="ca-app-pub-.../..." /></Field>
       <Field label="App Open Ad ID"><input className={inputCls} value={a.appOpenId} onChange={(e) => set("appOpenId", e.target.value)} /></Field>
-      <Field label="Banner ID"><input className={inputCls} value={a.bannerId} onChange={(e) => set("bannerId", e.target.value)} /></Field>
-      <Field label="Interstitial ID"><input className={inputCls} value={a.interstitialId} onChange={(e) => set("interstitialId", e.target.value)} /></Field>
-      <Field label="Native ID"><input className={inputCls} value={a.nativeId} onChange={(e) => set("nativeId", e.target.value)} /></Field>
-      <div className="col-span-full grid grid-cols-2 md:grid-cols-4 gap-2 pt-2">
-        {(["appOpen", "banner", "interstitial", "native"] as const).map((k) => (
-          <label key={k} className="flex items-center gap-2 text-xs">
-            <input type="checkbox" checked={a.formats[k]} onChange={(e) => setFmt(k, e.target.checked)} />
-            {k}
-          </label>
-        ))}
+      <Field label="Banner Ad ID"><input className={inputCls} value={a.bannerId} onChange={(e) => set("bannerId", e.target.value)} /></Field>
+      <Field label="Interstitial Ad ID"><input className={inputCls} value={a.interstitialId} onChange={(e) => set("interstitialId", e.target.value)} /></Field>
+      <Field label="Rewarded Ad ID"><input className={inputCls} value={a.rewardedId} onChange={(e) => set("rewardedId", e.target.value)} /></Field>
+      <Field label="Rewarded Interstitial Ad ID"><input className={inputCls} value={a.rewardedInterstitialId} onChange={(e) => set("rewardedInterstitialId", e.target.value)} /></Field>
+      <Field label="Native Advanced Ad ID"><input className={inputCls} value={a.nativeAdvancedId} onChange={(e) => set("nativeAdvancedId", e.target.value)} /></Field>
+      <div className="col-span-full">
+        <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">Enabled formats</p>
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-2">
+          {(["appOpen", "banner", "interstitial", "rewarded", "rewardedInterstitial", "native"] as const).map((k) => (
+            <label key={k} className="flex items-center gap-2 text-xs">
+              <input type="checkbox" checked={a.formats[k]} onChange={(e) => setFmt(k, e.target.checked)} />
+              {k}
+            </label>
+          ))}
+        </div>
       </div>
     </div>
   );
