@@ -1,0 +1,62 @@
+name: Build Android (APK + AAB)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  android:
+    name: Build Android Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build web bundle
+        run: bun run build
+
+      - name: Install Capacitor + AdMob plugin
+        run: |
+          bun add -d @capacitor/cli @capacitor/core @capacitor/android @capacitor/splash-screen @capacitor/assets
+          bun add @capacitor-community/admob
+
+      - name: Add Android platform + sync
+        run: |
+          npx cap add android || echo "android already added"
+          npx cap sync android
+
+      - name: Generate icons + native splash
+        run: |
+          if [ -d resources ]; then
+            npx @capacitor/assets generate --android || true
+          fi
+
+      - name: Assemble Release APK + AAB
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease bundleRelease
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-apk
+          path: android/app/build/outputs/apk/release/*.apk
+
+      - name: Upload AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-aab
+          path: android/app/build/outputs/bundle/release/*.aab

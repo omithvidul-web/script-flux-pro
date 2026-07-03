@@ -132,12 +132,21 @@ function ThemeBoot() {
   return null;
 }
 
+function AdMobBoot() {
+  useEffect(() => {
+    // Fire-and-forget. Guarded by isNative() inside — no-op in web browsers.
+    import("../lib/ads/admob-native").then((m) => m.initAdMobNative()).catch(() => {});
+  }, []);
+  return null;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeBoot />
+      <AdMobBoot />
       <Splash />
       <Suspense fallback={null}><AdminUnlockListener /></Suspense>
       <div className="min-h-screen flex flex-col">

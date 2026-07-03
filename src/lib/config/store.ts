@@ -1,5 +1,6 @@
 // Client-side config store (localStorage). Admin panel writes here.
-// This is the pragmatic v1 backend — swap to Lovable Cloud later.
+// The native Android WebView shares this storage with the web bundle, so
+// the AdMob native bootstrap reads IDs from the same source.
 import { useEffect, useState } from "react";
 
 export type AdSenseUnit = {
@@ -29,17 +30,30 @@ export type PageContent = {
   terms_html: string;
 };
 
-export type AppConfig = {
-  admob: {
-    enabled: boolean;
-    publisherId: string;
-    appId: string;
-    appOpenId: string;
-    bannerId: string;
-    interstitialId: string;
-    nativeId: string;
-    formats: { appOpen: boolean; banner: boolean; interstitial: boolean; native: boolean };
+export type AdMobConfig = {
+  enabled: boolean;
+  publisherId: string;
+  appId: string;
+  appOpenId: string;
+  bannerId: string;
+  interstitialId: string;
+  rewardedId: string;
+  rewardedInterstitialId: string;
+  nativeAdvancedId: string;
+  /** deprecated alias for nativeAdvancedId, kept for backward compat */
+  nativeId: string;
+  formats: {
+    appOpen: boolean;
+    banner: boolean;
+    interstitial: boolean;
+    rewarded: boolean;
+    rewardedInterstitial: boolean;
+    native: boolean;
   };
+};
+
+export type AppConfig = {
+  admob: AdMobConfig;
   adsense: {
     enabled: boolean;
     units: AdSenseUnit[];
@@ -65,8 +79,18 @@ export const DEFAULT_CONFIG: AppConfig = {
     appOpenId: "",
     bannerId: "",
     interstitialId: "",
+    rewardedId: "",
+    rewardedInterstitialId: "",
+    nativeAdvancedId: "",
     nativeId: "",
-    formats: { appOpen: true, banner: true, interstitial: true, native: false },
+    formats: {
+      appOpen: true,
+      banner: true,
+      interstitial: true,
+      rewarded: true,
+      rewardedInterstitial: true,
+      native: false,
+    },
   },
   adsense: { enabled: false, units: [] },
   adsterra: {
@@ -102,13 +126,32 @@ export const DEFAULT_CONFIG: AppConfig = {
 const KEY = "uuc-config-v1";
 const EVENT = "uuc-config-change";
 
+function migrate(parsed: Partial<AppConfig>): AppConfig {
+  const merged: AppConfig = {
+    ...DEFAULT_CONFIG,
+    ...parsed,
+    admob: { ...DEFAULT_CONFIG.admob, ...(parsed.admob ?? {}) },
+    adsense: { ...DEFAULT_CONFIG.adsense, ...(parsed.adsense ?? {}) },
+    adsterra: { ...DEFAULT_CONFIG.adsterra, ...(parsed.adsterra ?? {}) },
+    nav: parsed.nav ?? DEFAULT_CONFIG.nav,
+    pages: { ...DEFAULT_CONFIG.pages, ...(parsed.pages ?? {}) },
+  };
+  merged.admob.formats = { ...DEFAULT_CONFIG.admob.formats, ...(parsed.admob?.formats ?? {}) };
+  // Backward compat: mirror legacy nativeId into nativeAdvancedId
+  if (!merged.admob.nativeAdvancedId && merged.admob.nativeId) {
+    merged.admob.nativeAdvancedId = merged.admob.nativeId;
+  } else if (!merged.admob.nativeId && merged.admob.nativeAdvancedId) {
+    merged.admob.nativeId = merged.admob.nativeAdvancedId;
+  }
+  return merged;
+}
+
 export function loadConfig(): AppConfig {
   if (typeof window === "undefined") return DEFAULT_CONFIG;
   try {
     const raw = window.localStorage.getItem(KEY);
     if (!raw) return DEFAULT_CONFIG;
-    const parsed = JSON.parse(raw);
-    return { ...DEFAULT_CONFIG, ...parsed };
+    return migrate(JSON.parse(raw));
   } catch {
     return DEFAULT_CONFIG;
   }
@@ -116,7 +159,12 @@ export function loadConfig(): AppConfig {
 
 export function saveConfig(cfg: AppConfig) {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(KEY, JSON.stringify(cfg));
+  // Keep the legacy `nativeId` synced with `nativeAdvancedId`.
+  const normalized: AppConfig = {
+    ...cfg,
+    admob: { ...cfg.admob, nativeId: cfg.admob.nativeAdvancedId || cfg.admob.nativeId },
+  };
+  window.localStorage.setItem(KEY, JSON.stringify(normalized));
   window.dispatchEvent(new CustomEvent(EVENT));
 }
 
