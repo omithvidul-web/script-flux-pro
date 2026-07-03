@@ -22,11 +22,17 @@ function pickConfig(): AdMobConfig | null {
 }
 
 async function getAdMob() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const mod: any = await import(/* @vite-ignore */ "@capacitor-community/admob").catch(
-    () => null,
-  );
-  return mod?.AdMob ?? null;
+  // The plugin is only installed inside the native Android build (see
+  // .github/workflows/android.yml). Hide the specifier from TS + Vite by
+  // going through a variable so the web build never tries to resolve it.
+  const spec = "@capacitor-community/admob";
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const mod: any = await (new Function("s", "return import(s)")(spec));
+    return mod?.AdMob ?? null;
+  } catch {
+    return null;
+  }
 }
 
 /** Initialize the SDK and show the App Open ad. Idempotent. */
