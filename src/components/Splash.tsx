@@ -1,17 +1,20 @@
 import { useEffect, useState } from "react";
 import { logoBase64 } from "@/assets/logo-base64";
 
-// Native-parity web splash: pure white background, centered logo, brand text
-// in a modern logo-style font (Poppins 700, tight tracking). Auto-hides after
-// ~2.5s to match the Android native SplashScreen launchShowDuration.
+// Native-parity web splash: pure white background, centered logo, brand text.
+// The first client render intentionally matches SSR; sessionStorage is checked
+// after hydration to avoid React hydration errors on repeat visits.
 export function Splash() {
-  const [visible, setVisible] = useState(() => {
-    if (typeof window === "undefined") return true;
-    try { return sessionStorage.getItem("uuc-splash-seen") !== "1"; } catch { return true; }
-  });
+  const [visible, setVisible] = useState(true);
   const [fading, setFading] = useState(false);
 
   useEffect(() => {
+    try {
+      if (sessionStorage.getItem("uuc-splash-seen") === "1") {
+        setVisible(false);
+        return;
+      }
+    } catch {}
     if (!visible) return;
     const fadeT = setTimeout(() => setFading(true), 700);
     const hideT = setTimeout(() => {
@@ -39,7 +42,7 @@ export function Splash() {
         style={{
           fontFamily: '"Poppins", ui-sans-serif, system-ui, sans-serif',
           fontWeight: 700,
-          letterSpacing: "-0.03em",
+          letterSpacing: 0,
           color: "#111827",
         }}
       >
