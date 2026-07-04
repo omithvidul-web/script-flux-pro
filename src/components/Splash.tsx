@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import logo from "@/assets/uuc-logo.png.asset.json";
+import { logoBase64 } from "@/assets/logo-base64";
 
 // Native-parity web splash: pure white background, centered logo, brand text
 // in a modern logo-style font (Poppins 700, tight tracking). Auto-hides after
@@ -28,7 +28,7 @@ export function Splash() {
       className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white transition-opacity duration-300 ${fading ? "opacity-0" : "opacity-100"}`}
     >
       <img
-        src={logo.url}
+        src={logoBase64}
         alt="Universal Unicode Converter"
         width={128}
         height={128}
