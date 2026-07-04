@@ -13,11 +13,11 @@ export function Splash() {
 
   useEffect(() => {
     if (!visible) return;
-    const fadeT = setTimeout(() => setFading(true), 2200);
+    const fadeT = setTimeout(() => setFading(true), 700);
     const hideT = setTimeout(() => {
       setVisible(false);
       try { sessionStorage.setItem("uuc-splash-seen", "1"); } catch {}
-    }, 2500);
+    }, 1000);
     return () => { clearTimeout(fadeT); clearTimeout(hideT); };
   }, [visible]);
 
