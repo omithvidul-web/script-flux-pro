@@ -28,7 +28,7 @@ export function Splash() {
       className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white transition-opacity duration-300 ${fading ? "opacity-0" : "opacity-100"}`}
     >
       <img
-        src={logo.url}
+        src={logoBase64}
         alt="Universal Unicode Converter"
         width={128}
         height={128}
