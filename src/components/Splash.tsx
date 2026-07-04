@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import logo from "@/assets/uuc-logo.png.asset.json";
+import { logoBase64 } from "@/assets/logo-base64";
 
 // Native-parity web splash: pure white background, centered logo, brand text
 // in a modern logo-style font (Poppins 700, tight tracking). Auto-hides after
