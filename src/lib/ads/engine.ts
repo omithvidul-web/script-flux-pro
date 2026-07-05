@@ -44,11 +44,20 @@ export function fireAdsterraOnConvert(cfg: AppConfig) {
   const cooldownElapsed = now - state.lastAt >= cooldownMs;
 
   if (clicksReached && cooldownElapsed) {
+    // Must open synchronously inside the user-gesture click handler,
+    // otherwise browsers block the popup / new tab.
     try {
-      // Use setTimeout to avoid blocking the click handler thread.
-      setTimeout(() => {
-        window.open(link, "_blank", "noopener,noreferrer");
-      }, 0);
+      const win = window.open(link, "_blank", "noopener,noreferrer");
+      // Fallback: if the popup was blocked, navigate a hidden anchor instead.
+      if (!win) {
+        const a = document.createElement("a");
+        a.href = link;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      }
     } catch {}
     writeState({ count: 0, lastAt: now });
   } else {
