@@ -22,38 +22,57 @@ function writeState(s: CooldownState) {
   } catch {}
 }
 
+function normalizeLink(raw: string): string | null {
+  let link = raw.trim();
+  if (!link) return null;
+  // Accept "www.example.com/xyz" or "example.com/xyz" — add https:// prefix.
+  if (!/^https?:\/\//i.test(link)) {
+    link = "https://" + link.replace(/^\/+/, "");
+  }
+  try {
+    // Validate — throws for malformed URLs.
+    // eslint-disable-next-line no-new
+    new URL(link);
+    return link;
+  } catch {
+    return null;
+  }
+}
+
 /**
- * Fire the Adsterra Direct Link in a NEW TAB, non-blocking.
- * Returns immediately so conversion runs in parallel.
+ * Fire the Adsterra Direct Link in a NEW TAB.
+ * MUST be called synchronously from a user gesture (click handler).
  */
 export function fireAdsterraOnConvert(cfg: AppConfig) {
   // Only web browsers see Adsterra. Inside the Android WebView we disable it
   // to comply with Google Play policies.
   if (!isWeb() || isAndroidApp()) return;
   if (!cfg.adsterra.enabled) return;
-  const link = cfg.adsterra.directLink?.trim();
+  const link = normalizeLink(cfg.adsterra.directLink ?? "");
   if (!link) return;
 
   const now = Date.now();
   const state = readState();
-  const cooldownMs = cfg.adsterra.cooldownMinutes * 60_000;
+  const cooldownMs = Math.max(0, cfg.adsterra.cooldownMinutes) * 60_000;
+  const clicksNeeded = Math.max(1, cfg.adsterra.cooldownClicks);
   const nextCount = state.count + 1;
 
-  // Only fire every N clicks AND only after cooldown elapses since last fire.
-  const clicksReached = nextCount >= cfg.adsterra.cooldownClicks;
+  const clicksReached = nextCount >= clicksNeeded;
   const cooldownElapsed = now - state.lastAt >= cooldownMs;
 
   if (clicksReached && cooldownElapsed) {
-    // Must open synchronously inside the user-gesture click handler,
-    // otherwise browsers block the popup / new tab.
+    // Open synchronously inside the user-gesture click handler so browsers
+    // don't block the popup. Do NOT use `noreferrer` — Adsterra needs the
+    // referrer header to attribute the click; stripping it can result in
+    // no payout and/or a blank landing page.
     try {
-      const win = window.open(link, "_blank", "noopener,noreferrer");
-      // Fallback: if the popup was blocked, navigate a hidden anchor instead.
-      if (!win) {
+      const win = window.open(link, "_blank", "noopener");
+      // Fallback: if the popup was blocked, use a synthetic anchor click.
+      if (!win || win.closed) {
         const a = document.createElement("a");
         a.href = link;
         a.target = "_blank";
-        a.rel = "noopener noreferrer";
+        a.rel = "noopener";
         document.body.appendChild(a);
         a.click();
         a.remove();
