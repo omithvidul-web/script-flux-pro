@@ -54,14 +54,10 @@ function normalizeLink(raw: string): string | null {
 
 function openDirectLink(link: string): boolean {
   try {
-    // Open a blank tab synchronously first. This keeps the browser user-gesture
-    // context, then navigates that tab to the direct link.
-    const popup = window.open("about:blank", "_blank");
+    // Open synchronously from the Convert click. Avoid `noreferrer` and browser
+    // feature strings here because direct-link networks often require referrer.
+    const popup = window.open(link, "_blank");
     if (popup) {
-      try {
-        popup.opener = null;
-      } catch {}
-      popup.location.href = link;
       try {
         popup.focus();
       } catch {}
@@ -73,7 +69,6 @@ function openDirectLink(link: string): boolean {
     const a = document.createElement("a");
     a.href = link;
     a.target = "_blank";
-    a.rel = "noopener";
     document.body.appendChild(a);
     a.click();
     a.remove();
