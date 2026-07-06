@@ -27,6 +27,9 @@ jobs:
       - name: Build web bundle
         run: bun run build
 
+      - name: Prerender routes to static HTML for Capacitor
+        run: node scripts/prerender.mjs
+
       - name: Install Capacitor + AdMob plugin
         run: |
           bun add -d @capacitor/cli @capacitor/core @capacitor/android @capacitor/splash-screen @capacitor/assets
