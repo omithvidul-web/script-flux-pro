@@ -10,7 +10,7 @@ import type { CapacitorConfig } from "@capacitor/cli";
 const config: CapacitorConfig = {
   appId: "app.universal.unicode",
   appName: "Universal Unicode Converter",
-  webDir: "dist",
+  webDir: "dist/client",
   bundledWebRuntime: false,
   overrideUserAgent:
     "Mozilla/5.0 (Linux; Android) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Mobile Safari/537.36 MyAndroidApp/1.0",
