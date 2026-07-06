@@ -17,6 +17,7 @@ setup already included in this repo.
 ```bash
 bun install
 bun run build
+node scripts/prerender.mjs
 bun add -d @capacitor/cli @capacitor/core @capacitor/android @capacitor/splash-screen @capacitor/assets
 
 npx cap add android
